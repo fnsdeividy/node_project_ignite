@@ -1,7 +1,29 @@
-const express = require('express')
+const express = require("express");
+const { uuid } = require("uuidv4");
 
-const app = express()
-const PORT = 4000
+const app = express();
+const PORT = 4000;
 
+app.use(express.json());
 
-app.listen(PORT, () => console.log(`Server is running on port:${PORT}`))
+const costumers = [];
+
+app.post("/account", (req, res) => {
+    const id = uuid();
+    const { cpf, name } = req.body;
+    const costumerAlreadyExists = costumers.some(costumer => costumer.cpf === cpf)
+
+    if(costumerAlreadyExists) {
+        return res.status(400).json({ error: 'Costumer already exists!' })
+    }
+
+    costumers.push({
+        cpf,
+        name,
+        id,
+        statement: [],
+    });
+    res.status(201).send();
+});
+
+app.listen(PORT, () => console.log(`Server is running on port:${PORT}`));
