@@ -65,9 +65,7 @@ app.post("/deposit", verifyIfExistsAccountCPF, (req, res) => {
     created_at: new Date(),
     type: "credit",
   };
-  customer.statement.push(
-    statementOperation,
-  );
+  customer.statement.push(statementOperation);
 
   return res.status(201).send();
 });
@@ -90,40 +88,56 @@ app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => {
 
   customer.statement.push(statementOperation);
 
-  return res.status(201).send(statementOperation);
+  return res.status(201).send();
 });
 
 app.get("/statement/date", verifyIfExistsAccountCPF, (req, res) => {
   const { customer } = req;
   const { date } = req.query;
-  
-  if(customer.statement.length == 0) {
-    return res.status(400).json({ error: 'Not found statement' })
-  };
+
+  if (customer.statement.length == 0) {
+    return res.status(400).json({ error: "Not found statement" });
+  }
   const dateFormat = new Date(date + " 00:00");
 
   const statement = customer.statement.filter(
     (statement) =>
-    statement.created_at.toDateString() ===
-    new Date(dateFormat).toDateString()
-    );
-    
-    return res.json(statement);
-})
+      statement.created_at.toDateString() ===
+      new Date(dateFormat).toDateString()
+  );
 
-app.put('/account', verifyIfExistsAccountCPF,(req,res) => {
+  return res.json(statement);
+});
+
+app.put("/account", verifyIfExistsAccountCPF, (req, res) => {
   const { name } = req.body;
   const { customer } = req;
 
-  customer.name = name
+  customer.name = name;
 
-  return res.status(201).send()
+  return res.status(201).send();
+});
 
-})
+app.get("/account", verifyIfExistsAccountCPF, (req, res) => {
+  const { customer } = req;
 
-app.get('/account', verifyIfExistsAccountCPF, (req, res) => {
-  const { customer } = req
+  return res.status(201).json(customer);
+});
 
-  return res.status(201).json(customer)
-})
+app.delete("/account", verifyIfExistsAccountCPF, (req, res) => {
+  const { customer } = req;
+
+  customers.splice(customer, 1);
+
+  return res.status(200).json(customers);
+});
+
+app.get("/balance", verifyIfExistsAccountCPF, (req, res) => {
+  const { customer } = req;
+
+  const balance = getBalance(customer.statement);
+
+  return res.json(balance);
+});
+
 app.listen(PORT, () => console.log(`Server is running on port:${PORT}`));
