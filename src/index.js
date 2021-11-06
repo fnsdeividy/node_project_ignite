@@ -26,9 +26,12 @@ app.post("/account", (req, res) => {
     res.status(201).send();
 });
 
-app.get('/statement/:cpf', (req, res) => {
-    const { cpf } = req.params
+app.get('/statement/', (req, res) => {
+    const { cpf } = req.headers
     const costumer = costumers.find(costumer => (costumer.cpf === cpf))
+    if(!costumer) {
+        res.status(404).json({ error:'Costumer not found' })
+    }
     res.status(200).send(costumer.statement)
 })
 
