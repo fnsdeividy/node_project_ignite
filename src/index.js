@@ -26,4 +26,10 @@ app.post("/account", (req, res) => {
     res.status(201).send();
 });
 
+app.get('/statement/:cpf', (req, res) => {
+    const { cpf } = req.params
+    const costumer = costumers.find(costumer => (costumer.cpf === cpf))
+    res.status(200).send(costumer.statement)
+})
+
 app.listen(PORT, () => console.log(`Server is running on port:${PORT}`));
