@@ -70,14 +70,14 @@ app.post("/deposit", verifyIfExistsAccountCPF, (req, res) => {
   return res.status(201).send();
 });
 
-app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => {
+app.post("/withdraw", verifyIfExistsAccountCPF, (req, res) => { 
   const { amount } = req.body;
   const { customer } = req;
 
   const balance = getBalance(customer.statement);
 
   if (balance < amount) {
-    return res.status(400).json({ error: "Insufficient funds!" });
+    return res.status(400).json({ error: "Insufficient funds!"});
   }
 
   const statementOperation = {
